@@ -1,6 +1,46 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+h1 {
+	padding: 50px;
+	text-align: center;
+	color: red;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:link {
+	color: #0ff
+}
+
+a:visited {
+	color: #fa8072
+}
+
+a:hover {
+	color: #7cfc00
+}
+
+a:active {
+	color: #8b008b
+}
+
+img {
+	float: right;
+	margin-top: 100px;
+	margin-right: 20px;
+}
+
 .main {
 	background-color: #000;
 	color: #fff;
 	/*color: red;*/
 	font-family: Verdana, Geneva, sans-serif
+}
+
+.justify-padding {
+	padding: 100px;
 }
