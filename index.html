@@ -7,9 +7,11 @@
 		<link rel="stylesheet" href="css/styles.css" />
 		
 		<script type="text/javascript">
-			(function() {
-				alert('Vào đây làm gì thế?');
-			})();
+			function run() {
+				(function() {
+					alert('Vào đây làm gì thế?');
+				})();
+			}
 		</script>
 		<style>
 		</style>
@@ -21,6 +23,8 @@
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
 			gtag('config', 'UA-58959338-2');
+			
+			run();
 		</script>
 	</head>
 
