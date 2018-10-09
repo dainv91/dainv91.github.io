@@ -6,7 +6,7 @@
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="css/styles.css" />
 		
-		<script type="text/javascript">
+		<script type="text/javascript" async>
 			function run() {
 				(function() {
 					alert('Vào đây làm gì thế?');
@@ -17,13 +17,15 @@
 		</style>
 		<title>Home page</title>
 		<!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-58959338-2"></script>
+		<!--<script async src="https://www.googletagmanager.com/gtag/js?id=UA-58959338-2"></script>-->
+		<script src="/js/ga.js" type="text/javascript" charset="utf-8" async defer></script>
 		<script>
+			/*
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
 			gtag('config', 'UA-58959338-2');
-			
+			*/
 			run();
 		</script>
 	</head>
