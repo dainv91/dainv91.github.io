@@ -57,8 +57,9 @@
 					} else {
 						data = obj[attr];
 					}
+					var c = 'col-md-' + col + ' col-xs-' + col;
 					
-					html.push('<div class="col-md-' + col + ' ' + attr + '">');
+					html.push('<div class="' + c + ' ' + attr + '">');
 					html.push(data);
 					html.push('</div>');
 					
@@ -67,18 +68,10 @@
 				return html.join('');
 			}
 			
-			function get_html_from_lst(lst_str, pass, callback) {
-				var html = lst_str;
-				var json = decrypt(lst_str, pass);
-				if (!json) {
-					callback();
-					return;
-				}
-				var arr = JSON.parse(json);
+			function get_html_from_arr(arr) {
 				if (!arr) {
 					return;
 				}
-				
 				var html = [];
 				var header = get_row_html(arr[0], true);
 				html.push(header);
@@ -88,6 +81,63 @@
 					html.push(row_html);
 				}
 				return html.join('');
+			}
+			
+			// Deprecated
+			function get_html_from_lst(lst_str, pass, callback) {
+				var html = lst_str;
+				var json = decrypt(lst_str, pass);
+				if (!json) {
+					callback();
+					return;
+				}
+				var arr = JSON.parse(json);
+				return get_html_from_arr(arr);
+				
+				/*
+				var html = [];
+				var header = get_row_html(arr[0], true);
+				html.push(header);
+				for (var i=0; i<arr.length; i++) {
+					var obj = arr[i];
+					var row_html = get_row_html(obj);
+					html.push(row_html);
+				}
+				return html.join('');
+				*/
+			}
+			
+			function get_list_wifi_from_file(pass) {
+				var url = 'files/wifi.txt';
+				$.ajax({
+					url : url,
+					dataType: 'json',
+					data: {
+						'url': url
+					},
+					
+				}).done(function(result){
+					//console.log(result);
+					var container = $('#div_lst_wifi');
+					container.html('');
+					for (var i in result) {
+						var obj = result[i];
+						if (!obj || !obj.passwd) {
+							continue;
+						}
+						var passDecrypted = decrypt(obj.passwd, pass);
+						if (!passDecrypted) {
+							alert('Wrong password, please try again...');
+							return;
+						}
+						obj.passwd = passDecrypted;
+					}
+					var html = get_html_from_arr(result);
+					container.append(html);
+				}).fail(function(xhr, status, errorThrown){
+					var msg = xhr.responseText;
+					alert(msg);
+				});
 			}
 
 			$(document).ready(function(){
@@ -99,13 +149,8 @@
 					} else {
 						pass = '';
 					}
-					var container = $('#div_lst_wifi');
-					container.html('');
-					
-					var html = get_html_from_lst(LST_WIFI_ENC, pass, function(){
-						alert('Wrong password, please try again...');
-					});
-					container.append(html);
+					get_list_wifi_from_file(pass);
+					return;
 				});
 				
 				var rows = $('#div_lst_wifi').on('click', 'div.row', function(){
