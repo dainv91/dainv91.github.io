@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link href="/css/bootstrap-4.1.3.min.css" rel="stylesheet" />
+		<link href="/css/bootstrap-grid-4.1.3.min.css" rel="stylesheet" />
+		<link href="//vjs.zencdn.net/7.3.0/video-js.min.css" rel="stylesheet">
+		<style>
+			.hide {
+				display: none;
+			}
+			.image {
+				cursor: pointer;
+			}
+			/*.img-responsive{width:100%;}*/
+			.between {
+				width: 650px;
+			}
+		</style>
+
+		<script src="/js/jquery-3.3.1.min.js"></script>
+		<script src="/js/bootstrap-4.1.3.min.js"></script>
+		<script src="/js/ga.js" type="text/javascript" charset="utf-8" async defer></script>
+		
+		<script src="//vjs.zencdn.net/7.3.0/video.min.js"></script>
+		<title>Media player test</title>
+
+		<script type="text/javascript" charset="utf-8" async defer>
+			var current = 0;
+			var previousTime = 0;
+			var currentTime = 0;
+			
+			function init_lst_obj() {
+				var arr = [];
+				arr.push({txt : 'Reading manga (Onepiece, Onepunch-man, ...)', link : 'http://ookii.000webhostapp.com/php/op/'});
+				arr.push({txt : 'Stackoverflow', link : 'https://stackoverflow.com/users/story/3087608'});
+				arr.push({txt : 'Hackerrank', link : 'https://www.hackerrank.com/dainv91'});				
+				arr.push({txt : "Don&#39t starve food guide", link: "https://dainv91.github.io/dontstarve/foodguide/html/index.htm"});
+				arr.push({txt : "Wifi password", link: "../wifi.html"});
+
+				return arr;
+			}
+			
+			function get_list_audios() {
+				var arr = [];
+				arr.push({txt: 'File 1', link: 'files/bruk.mp3'});
+				arr.push({txt: 'File 2', link: 'files/sakebinksa.mp3'});
+				return arr;
+			}
+			
+			function to_html(obj) {
+				var html = [];
+				html.push('<div class="line">');
+				html.push('<a target="_blank" href="');
+				html.push(obj.link);
+				html.push('">');
+				html.push(obj.txt);
+				html.push('</a>');
+				html.push('</div>');
+				return html.join('');
+			}
+
+			function render(container, arr){
+				for (var i=0; i<arr.length; i++) {
+					var obj = arr[i];
+					var html = to_html(obj);
+					container.append(html);
+				}
+			}
+			
+			function play(arr) {
+				var obj = arr[current++ %2];
+				var link = obj.link;
+				var options = {controls: true};
+				$('.div_playing').text(obj.txt);
+
+				var player = videojs('my-player', options, function onPlayerReady() {
+				  videojs.log('Your player is ready!');
+				  this.src({type:'audio/mp3', src: link});
+				  // In this context, `this` is the player that was created by Video.js.
+				  this.play();
+
+				  // How about an event listener?
+				  this.on('ended', function() {
+					videojs.log('Awww...over so soon?!');
+				  });
+				});
+				console.log(player);
+				
+				player.on('timeupdate', function(){
+					previousTime = currentTime;
+					currentTime = this.currentTime();
+					//console.log(currentTime);
+					var total = this.duration();
+					
+					$('.time_stamp').text(currentTime + "/" + total);
+				});
+			}
+
+			$(document).ready(function(){
+				
+				//var arr = init_lst_obj();
+				//render($('#links_holder'), arr);
+				$('#btn_play').click(function(){
+					var arr = get_list_audios();
+					console.log("Current: " + current);
+					play(arr);
+					$('#img_pause').removeClass('hide');
+					$('#img_pause').addClass('play');
+					//$('#img_pause').removeClass('play');
+				});
+				
+				$('.next').click(function(){
+					var arr = get_list_audios();
+					console.log("Current: " + current);
+					play(arr);
+				});
+				
+				$('div.image #img_pause').click(function(){
+					var player = videojs('my-player');
+					console.log($(this));
+					if ($(this).hasClass('pause')) {
+						$(this).removeClass('pause');
+						$(this).addClass('play');
+						player.play();
+						return;
+					}
+					$(this).removeClass('play');
+					$(this).addClass('pause');
+					player.pause();
+				});
+				
+				$('#btn_seek').click(function(){
+					var player = videojs('my-player');
+					var timeToSeek = $('#txt_second').val();
+					player.currentTime(timeToSeek);
+				});
+				
+				$('#btn_show_hide').click(function(){
+					var div = $('#div_control');
+					if (div.hasClass('hide')) {
+						div.removeClass('hide');
+						return;
+					}
+					div.addClass('hide');
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<h1>WTF media player</h1>
+			<div class="form-group">
+				<input type="text" id="txt_second" placeholder="Second to seeking. Ex: 150"/>
+				<input type="button" id="btn_seek" value="Go to" />
+			</div>
+			<div class="form-group">
+				<!--<label for="links_holder">Links:</label>-->
+				<div id="links_holder"></div>
+				<div class="controls">
+					<div class="div_playing_container"><strong><div class="div_playing"></div></strong></div>
+					<input type="button" id="btn_play" value="Play" />
+					<input type="button next" id="btn_next" value="Next" />
+					<input type="button" id="btn_show_hide" value="Show/Hide" />
+					<div><strong>Time: </strong><div class="time_stamp"></div></div>
+				</div>
+			</div>
+			<div class="form-group image">
+				<img class="img-responsive playing hide" src="files/1_pause.png" id="img_pause" />
+				<img class="img-responsive next" src="files/2_prev.png" />
+				<img class="img-responsive next" src="files/3_next.png" />
+				<img class="img-responsive between" src="files/5_between.png"  />
+				<img class="img-responsive stop" src="files/4_exit.png" />
+			</div>
+			<div class="form-group" id="div_control">
+				<audio
+					id="my-player"
+					class="video-js"
+					controls
+					preload="auto"
+					data-setup='{}'>
+				  <!--
+				  <source src="//vjs.zencdn.net/v/oceans.mp4" type="video/mp4"></source>
+				  <source src="//vjs.zencdn.net/v/oceans.webm" type="video/webm"></source>
+				  <source src="//vjs.zencdn.net/v/oceans.ogv" type="video/ogg"></source>
+				  -->
+				  
+				  <p class="vjs-no-js">
+					To view this video please enable JavaScript, and consider upgrading to a
+					web browser that
+					<a href="https://videojs.com/html5-video-support/" target="_blank">
+					  supports HTML5 video
+					</a>
+				  </p>
+				</audio>
+			</div>
+		</div>
+	</body>
+</html>
